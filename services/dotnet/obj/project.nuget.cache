@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Ev35WGpcKso=",
+  "success": true,
+  "projectFilePath": "/Users/harispandzic/Desktop/projects/health-care/services/dotnet/dotnet.csproj",
+  "expectedPackageFiles": [
+    "/Users/harispandzic/.nuget/packages/microsoft.aspnetcore.openapi/9.0.4/microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
+    "/Users/harispandzic/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,16 @@
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway using Kong",
+  "scripts": {
+    "dev": "echo 'Kong is handling routing and authentication'"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "Haris Pandzic",
+  "license": "MIT"
+}

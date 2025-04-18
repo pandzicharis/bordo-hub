@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: healthcare
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
