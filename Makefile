@@ -7,7 +7,9 @@ NEST_ROOT = docker compose -f services/nest/docker-compose.yml
 PYTHON_ROOT = docker compose -f services/python/docker-compose.yml
 DOTNET_ROOT = docker compose -f services/dotnet/docker-compose.yml
 
-up:
+GO_MIGRATE_DB_URL='postgresql://$(DB_USER):$(DB_PASSWORD)@postgres:5432/$(DB_NAME)?sslmode=disable'
+
+infra-init:
 	@echo "Check app network..."
 	@docker network ls | grep app-network || docker network create app-network
 
@@ -16,7 +18,7 @@ up:
 	$(DOCKER_COMPOSE_API_GATEWAY) up --build -d kong
 	
 	@echo "Starting postgres server..."
-	$(DOCKER_COMPOSE_DB) up --build -d
+	$(DOCKER_COMPOSE_DB) up postgres --build -d
 	
 	@echo "Starting Nest server..."
 	$(NEST_ROOT) up --build -d
@@ -27,5 +29,13 @@ up:
 	@echo "Starting dotnet server..."
 	$(DOTNET_ROOT) up --build -d
 
-kong:
-	./scripts/init-kong.sh
+kong-init:
+	./infra/api-gateway/init-kong.sh
+
+migrate-create:
+	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate create -ext sql -dir /app/migrations -seq $(name)
+
+migrate-up:
+	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate \
+	-path=/app/migrations \
+	-database $(GO_MIGRATE_DB_URL) up
