@@ -67,4 +67,4 @@ curl -i -X POST "${KONG_ADMIN_API_URL}/routes/" \
 
 curl -i -X POST "${KONG_ADMIN_API_URL}:8001/plugins" \
   --data "name=file-log" \
-  --data "config.path=/logs/kong-api.log"
+  --data "config.path=/logs/api-gateway.log"

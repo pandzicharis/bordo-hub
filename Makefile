@@ -44,3 +44,4 @@ migrate-up:
 
 logger-init:
 	$(LOGGER_LGP) up --build -d
+	cd infra/logging && ./init.sh
