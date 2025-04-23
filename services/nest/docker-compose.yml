@@ -3,6 +3,8 @@ services:
     build: .
     ports:
       - '${NEST_PORT}:3000'
+    volumes:
+      - ../../logs:/usr/src/app/logs
     networks:
       - app-network
 

@@ -1,1 +1,6 @@
 .env
+services/nest/dist
+services/nest/node_modules
+infra/logging/loki_data
+logs
+services/python/path/to/venv
