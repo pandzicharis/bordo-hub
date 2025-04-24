@@ -1,9 +1,13 @@
 services:
   nest:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '${NEST_PORT}:3000'
     volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
       - ../../logs:/usr/src/app/logs
     networks:
       - app-network
