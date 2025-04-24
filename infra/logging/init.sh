@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ROOT_DIR="../../logs"
-FILES=("api-gateway.log" "nest.log")
+FILES=("api-gateway.log" "nest.log","python.log")
 
 # Provjera trenutnih dozvola za ROOT_DIR
 echo "Provjera dozvola za direktorij: $ROOT_DIR"

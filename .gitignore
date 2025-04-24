@@ -3,4 +3,6 @@ services/nest/dist
 services/nest/node_modules
 infra/logging/loki_data
 logs
-services/python/path/to/venv
+services/python/venv
+services/python/logconfig/__pycache__
+services/python/scripts/__pycache__
