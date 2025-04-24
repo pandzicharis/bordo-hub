@@ -5,10 +5,10 @@ app = Flask(__name__)
 
 setup_logging()
 
-@app.route('/test2')
-def hello_world():
-    print("Ova poruka ide u python.log")
-    return 'Hello from PYTHON  server!'
+@app.route('/hello')
+def get_hello():
+    print("Hello from python!")
+    return 'Hello from python!'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

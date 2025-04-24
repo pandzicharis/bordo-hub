@@ -6,3 +6,11 @@ logs
 services/python/venv
 services/python/logconfig/__pycache__
 services/python/scripts/__pycache__
+services/dotnet/obj
+services/dotnet/obj/Debug
+services/dotnet/bin
+services/dotnet/obj/dotnet.csproj.nuget.dgspec.json
+services/dotnet/obj/dotnet.csproj.nuget.g.props
+services/dotnet/obj/dotnet.csproj.nuget.g.targets
+services/dotnet/obj/project.assets.json
+services/dotnet/obj/project.nuget.cache

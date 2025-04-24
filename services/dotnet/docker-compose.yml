@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${DOTNET_PORT}:80"
+    volumes:
+      - .:/app
+      - ../../logs:/app/logs
     networks:
       - app-network
 

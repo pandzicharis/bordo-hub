@@ -1,14 +1,19 @@
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+LoggerConfigurationHelper.ConfigureLogging();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(); 
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.MapGet("/", () => "Hello from .NET!");
+app.MapGet("/hello", () => {
+    Log.Information("Hello from .NET!");
+    return "Hello from .NET!";});
 
 app.Urls.Add("http://0.0.0.0:80");
 
