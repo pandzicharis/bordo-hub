@@ -8,3 +8,10 @@
 http://host.docker.internal:4100 dodati u grafanu prilikom povezivanja na loki
 
 napraviti folder logs i dba file-a - ako ne postoji
+
+1. make infra-init
+2. make kong-init
+3. make logger-init
+
+Gasenje
+make infra-down

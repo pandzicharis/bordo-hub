@@ -65,6 +65,6 @@ curl -i -X POST "${KONG_ADMIN_API_URL}/routes/" \
   --data "strip_path=false" \
   --data "service.name=${NEST_SERVICE}"
 
-curl -i -X POST "${KONG_ADMIN_API_URL}:8001/plugins" \
+curl -i -X POST "${KONG_ADMIN_API_URL}/plugins" \
   --data "name=file-log" \
   --data "config.path=/logs/api-gateway.log"

@@ -10,6 +10,8 @@ services:
       - grafana-storage:/var/lib/grafana
     depends_on:
       - loki
+    networks:
+      - app-network
 
   loki:
     image: grafana/loki:2.8.0
@@ -22,6 +24,8 @@ services:
     environment:
       - "LOKI_PORT=4100"
     restart: always
+    networks:
+      - app-network
 
   promtail:
     image: grafana/promtail:latest
@@ -29,9 +33,15 @@ services:
     volumes:
       - ./promtail-config.yml:/etc/promtail/config.yml
       - ./../../logs:/app/logs
-    command: -config.file=/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true
     ports:
       - "${PROMTAIL_PORT}:4200"
+    networks:
+      - app-network
 
 volumes:
   grafana-storage:
+
+networks:
+  app-network:
+    external: true

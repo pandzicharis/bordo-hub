@@ -1,47 +1,80 @@
-include .env
-export $(shell sed 's/=.*//' .env)
+# Load environment variables from .env file
+ifneq (,$(wildcard .env))
+	include .env
+	export
+endif
 
+# Compose command shortcuts
 DOCKER_COMPOSE_DB = docker compose -f infra/db/docker-compose.yml
 DOCKER_COMPOSE_API_GATEWAY = docker compose -f infra/api-gateway/docker-compose.yml
 NEST_ROOT = docker compose -f services/nest/docker-compose.yml
 PYTHON_ROOT = docker compose -f services/python/docker-compose.yml
 DOTNET_ROOT = docker compose -f services/dotnet/docker-compose.yml
-
-GO_MIGRATE_DB_URL='postgresql://$(DB_USER):$(DB_PASSWORD)@postgres:5432/$(DB_NAME)?sslmode=disable'
-
 LOGGER_LGP = docker compose -f infra/logging/docker-compose.yml
 
+# Migration URL
+GO_MIGRATE_DB_URL = postgresql://$(DB_USER):$(DB_PASSWORD)@postgres:$(DB_PORT)/$(DB_NAME)?sslmode=disable
+
+# ========== INFRA ==========
 infra-init:
-	@echo "Check app network..."
+	@echo "🔌 Create network..."
 	@docker network ls | grep app-network || docker network create app-network
 
-	@echo "Starting API Gateway..."
-	$(DOCKER_COMPOSE_API_GATEWAY) up --build -d kong-database kong-migrations && \
-	$(DOCKER_COMPOSE_API_GATEWAY) up --build -d kong
-	
-	@echo "Starting postgres server..."
-	$(DOCKER_COMPOSE_DB) up postgres --build -d
-	
-	@echo "Starting Nest server..."
-	$(NEST_ROOT) up --build -d
-	
-	@echo "Starting Python server..."
-	$(PYTHON_ROOT) up --build -d
+	@echo "🐘 Starting Kong DB..."
+	$(DOCKER_COMPOSE_API_GATEWAY) up -d kong-database
+	@echo "⏳ Waiting for Postgres..."
+	@sleep 5
 
-	@echo "Starting dotnet server..."
-	$(DOTNET_ROOT) up --build -d
+	@echo "🔧 Running migrations..."
+	@if ! docker exec kong-database psql -U $(KONG_POSTGRES_USER) -d $(KONG_POSTGRES_DB) -c "SELECT * FROM schema_migrations;" > /dev/null 2>&1; then \
+		echo "⚙️  There is not migrations, starting bootstrap..."; \
+		$(DOCKER_COMPOSE_API_GATEWAY) run --rm kong-migrations; \
+	else \
+		echo "✅ Migrations done."; \
+	fi
 
+	@echo "🚀 Starting Kong gateway..."
+	$(DOCKER_COMPOSE_API_GATEWAY) up -d kong
+
+	@echo "🗄️  Starting services..."
+	$(DOCKER_COMPOSE_DB) up -d --build postgres
+	$(NEST_ROOT) up -d --build
+	$(PYTHON_ROOT) up -d --build
+	$(DOTNET_ROOT) up -d --build
+
+infra-down:
+	@echo "🛑 Removing API Gateway..."
+	$(DOCKER_COMPOSE_API_GATEWAY) down -v 
+
+	@echo "🛑 Removing DB..."
+	$(DOCKER_COMPOSE_DB) down -v
+
+	@echo "🛑 Removing Nest..."
+	$(NEST_ROOT) down -v
+
+	@echo "🛑 Removing Python..."
+	$(PYTHON_ROOT) down -v
+
+	@echo "🛑 Removing .NET..."
+	$(DOTNET_ROOT) down -v
+
+	@echo "🛑 Removing logger..."
+	$(LOGGER_LGP) down -v
+
+# ========== KONG ==========
 kong-init:
 	./infra/api-gateway/init-kong.sh
 
+# ========== MIGRATIONS ==========
 migrate-create:
 	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate create -ext sql -dir /app/migrations -seq $(name)
 
 migrate-up:
 	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate \
-	-path=/app/migrations \
-	-database $(GO_MIGRATE_DB_URL) up
+		-path=/app/migrations \
+		-database $(GO_MIGRATE_DB_URL) up
 
+# ========== LOGGER ==========
 logger-init:
 	$(LOGGER_LGP) up --build -d
 	cd infra/logging && ./init.sh
