@@ -1,9 +1,12 @@
 from flask import Flask
 from scripts.log_config import setup_logging 
+from scripts.log_request import logger_middleware
 
 app = Flask(__name__)
 
 setup_logging()
+
+logger_middleware(app)
 
 @app.route('/hello')
 def get_hello():
