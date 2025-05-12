@@ -1,14 +1,61 @@
 services:
-  postgres:
+  nest-db:
     image: postgres:latest
+    container_name: nest-db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${NEST_DB_USER}
+      POSTGRES_PASSWORD: ${NEST_DB_PASSWORD}
+      POSTGRES_DB: ${NEST_DB_NAME}
     ports:
-      - "${DB_PORT}:5432"
+      - "${NEST_DB_PORT}:5432"
+    volumes:
+      - nest_db_data:/var/lib/postgresql/data
     networks:
       - app-network
+    command: "postgres"
+    
+  python-db:
+    image: postgres:latest
+    container_name: python-db
+    environment:
+      POSTGRES_USER: ${PYTHON_DB_USER}
+      POSTGRES_PASSWORD: ${PYTHON_DB_PASSWORD}
+      POSTGRES_DB: ${PYTHON_DB_NAME}
+    ports:
+      - "${PYTHON_DB_PORT}:5432"
+    volumes:
+      - python_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    command: "postgres"
+    
+  dotnet-db:
+    image: postgres:latest
+    container_name: dotnet-db
+    environment:
+      POSTGRES_USER: ${DOTNET_DB_USER}
+      POSTGRES_PASSWORD: ${DOTNET_DB_PASSWORD}
+      POSTGRES_DB: ${DOTNET_DB_NAME}
+    ports:
+      - "${DOTNET_DB_PORT}:5432"
+    volumes:
+      - dotnet_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    command: "postgres"
+
+  shared-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${SHARED_DB_USER}
+      POSTGRES_PASSWORD: ${SHARED_DB_PASSWORD}
+      POSTGRES_DB: ${SHARED_DB_NAME}
+    ports:
+      - "${SHARED_DB_PORT}:5432"
+    networks:
+      - app-network
+    volumes:
+      - shared_db_data:/var/lib/postgresql/data
     command: "postgres"
 
   migrate:
@@ -18,13 +65,19 @@ services:
     networks:
       - app-network
     depends_on:
-      - postgres
+      - shared-db
     command: "migrate"
     entrypoint: ["migrate"]
     environment:
-      DATABASE_URL: "postgres://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}?sslmode=disable"
+      DATABASE_URL: "postgres://${SHARED_DB_USER}:${SHARED_DB_PASSWORD}@localhost:${SHARED_DB_PORT}/${SHARED_DB_NAME}?sslmode=disable"
     volumes:
       - ./migrations:/app/migrations
+
+volumes:
+  nest_db_data:
+  python_db_data:
+  dotnet_db_data:
+  shared_db_data:
 
 networks:
   app-network:

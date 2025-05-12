@@ -13,7 +13,7 @@ DOTNET_ROOT = docker compose -f services/dotnet/docker-compose.yml
 LOGGER_LGP = docker compose -f infra/logging/docker-compose.yml
 
 # Migration URL
-GO_MIGRATE_DB_URL = postgresql://$(DB_USER):$(DB_PASSWORD)@postgres:$(DB_PORT)/$(DB_NAME)?sslmode=disable
+GO_MIGRATE_DB_URL = postgresql://$(SHARED_DB_USER):$(SHARED_DB_PASSWORD)@postgres:$(SHARED_DB_PORT)/$(SHARED_DB_NAME)?sslmode=disable
 
 # ========== INFRA ==========
 infra-init:
@@ -37,7 +37,10 @@ infra-init:
 	$(DOCKER_COMPOSE_API_GATEWAY) up -d kong
 
 	@echo "🗄️  Starting services..."
-	$(DOCKER_COMPOSE_DB) up -d --build postgres
+	$(DOCKER_COMPOSE_DB) up -d --build shared-db
+	$(DOCKER_COMPOSE_DB) up -d --build nest-db
+	$(DOCKER_COMPOSE_DB) up -d --build python-db
+	$(DOCKER_COMPOSE_DB) up -d --build dotnet-db
 	$(NEST_ROOT) up -d --build
 	$(PYTHON_ROOT) up -d --build
 	$(DOTNET_ROOT) up -d --build
