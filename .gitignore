@@ -1,4 +1,3 @@
-.env
 services/nest/dist
 services/nest/node_modules
 infra/logging/loki_data
@@ -14,3 +13,4 @@ services/dotnet/obj/dotnet.csproj.nuget.g.props
 services/dotnet/obj/dotnet.csproj.nuget.g.targets
 services/dotnet/obj/project.assets.json
 services/dotnet/obj/project.nuget.cache
+services/nest/src/generated/prisma
