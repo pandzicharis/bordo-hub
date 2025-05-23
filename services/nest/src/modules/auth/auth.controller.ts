@@ -1,3 +1,5 @@
+import { User as dbUser } from './../../generated/prisma/index.d';
+import { User } from './decorators/user';
 import {
   Controller,
   Post,
@@ -31,8 +33,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req: ExpressRequest) {
-    return req.user;
+  @Get('validate')
+  validate(@Request() req: ExpressRequest, @User() user: dbUser) {
+    return user;
   }
 }
