@@ -11,6 +11,8 @@ NEST_ROOT = docker compose -f services/nest/docker-compose.yml
 PYTHON_ROOT = docker compose -f services/python/docker-compose.yml
 DOTNET_ROOT = docker compose -f services/dotnet/docker-compose.yml
 LOGGER_LGP = docker compose -f infra/logging/docker-compose.yml
+CACHE_ROOT = docker compose -f infra/cache/docker-compose.yml
+EVENTS_ROOT = docker compose -f infra/events/docker-compose.yml
 
 # Migration URL
 GO_MIGRATE_DB_URL = postgresql://$(SHARED_DB_USER):$(SHARED_DB_PASSWORD)@postgres:$(SHARED_DB_PORT)/$(SHARED_DB_NAME)?sslmode=disable
@@ -45,6 +47,12 @@ infra-init:
 	$(PYTHON_ROOT) up -d --build
 	$(DOTNET_ROOT) up -d --build
 
+	@echo "🗄️  Starting cache..."
+	$(CACHE_ROOT) up -d --build 
+
+	@echo "🗄️  Starting events..."
+	$(EVENTS_ROOT) up -d --build 
+
 infra-down:
 	@echo "🛑 Removing API Gateway..."
 	$(DOCKER_COMPOSE_API_GATEWAY) down -v 
@@ -63,6 +71,12 @@ infra-down:
 
 	@echo "🛑 Removing logger..."
 	$(LOGGER_LGP) down -v
+
+	@echo "🛑 Removing cache..."
+	$(CACHE_ROOT) down -v
+
+	@echo "🛑 Removing events..."
+	$(EVENTS_ROOT) down -v
 
 # ========== KONG ==========
 kong-init:

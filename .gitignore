@@ -14,3 +14,6 @@ services/dotnet/obj/dotnet.csproj.nuget.g.targets
 services/dotnet/obj/project.assets.json
 services/dotnet/obj/project.nuget.cache
 services/nest/src/generated/prisma
+/node_modules
+/services/dotnet/obj
+obj
