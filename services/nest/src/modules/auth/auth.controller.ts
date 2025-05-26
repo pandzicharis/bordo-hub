@@ -1,3 +1,4 @@
+import { RegisterDto, LoginDto } from './../../../dto/auth.dto';
 import { User as dbUser } from './../../generated/prisma/index.d';
 import { User } from './decorators/user';
 import {
@@ -12,7 +13,6 @@ import {
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request as ExpressRequest } from 'express';
-import { LoginDto, RegisterDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {

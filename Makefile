@@ -38,6 +38,12 @@ infra-init:
 	@echo "🚀 Starting Kong gateway..."
 	$(DOCKER_COMPOSE_API_GATEWAY) up -d kong
 
+	@echo "🗄️  Starting cache..."
+	$(CACHE_ROOT) up -d --build 
+
+	@echo "🗄️  Starting events..."
+	$(EVENTS_ROOT) up -d --build 
+
 	@echo "🗄️  Starting services..."
 	$(DOCKER_COMPOSE_DB) up -d --build shared-db
 	$(DOCKER_COMPOSE_DB) up -d --build nest-db
@@ -47,11 +53,6 @@ infra-init:
 	$(PYTHON_ROOT) up -d --build
 	$(DOTNET_ROOT) up -d --build
 
-	@echo "🗄️  Starting cache..."
-	$(CACHE_ROOT) up -d --build 
-
-	@echo "🗄️  Starting events..."
-	$(EVENTS_ROOT) up -d --build 
 
 infra-down:
 	@echo "🛑 Removing API Gateway..."

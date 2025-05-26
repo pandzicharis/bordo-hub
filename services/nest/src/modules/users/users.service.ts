@@ -1,9 +1,13 @@
+import { RabbitMQService } from './../../rabbitmq/rabbitmq.service';
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private rabbitMQService: RabbitMQService,
+  ) {}
 
   async list() {
     return this.prisma.user.findMany({});
@@ -22,8 +26,17 @@ export class UsersService {
   }
 
   async create(data: { email: string; password: string }) {
-    return this.prisma.user.create({
-      data,
-    });
+    const user = await this.prisma.user.create({ data });
+
+    await this.rabbitMQService.publish(
+      {
+        event: 'user.created',
+        data: user,
+      },
+      'user.queue',
+      'user.events',
+    );
+
+    return user;
   }
 }
