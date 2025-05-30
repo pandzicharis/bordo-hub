@@ -17,3 +17,6 @@ services/nest/src/generated/prisma
 /node_modules
 /services/dotnet/obj
 obj
+services/python/__pycache__
+services/python/alembic/__pycache__
+services/python/models/__pycache__
