@@ -20,7 +20,7 @@ export class RabbitMQService implements OnModuleInit {
 
     this.initializationPromise = (async () => {
       try {
-        this.connection = await amqp.connect('amqp://rabbitmq:5672');
+        this.connection = await amqp.connect(`amqp://rabbitmq:${process.env.RABITMQ_PORT || 5672}`);
         this.channel = await this.connection.createChannel();
 
         await this.channel.assertExchange('exchange', 'fanout', {
