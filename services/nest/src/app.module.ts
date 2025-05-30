@@ -1,3 +1,5 @@
+import { RedisModule } from './redis/redis.module';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
@@ -7,7 +9,7 @@ import { LoggerMiddleware } from './logger/log-request.middleware';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
-  imports: [PrometheusModule.register(), UsersModule, AuthModule],
+  imports: [PrometheusModule.register(), UsersModule, AuthModule, RabbitMQModule, RedisModule],
   controllers: [AppController],
   providers: [AppService],
 })

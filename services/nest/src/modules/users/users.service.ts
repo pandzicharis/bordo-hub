@@ -1,9 +1,13 @@
+import { UserPublisher } from './../../rabbitmq/publishers/user.publisher';
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userPublisher: UserPublisher,
+  ) {}
 
   async list() {
     return this.prisma.user.findMany({});
@@ -22,7 +26,11 @@ export class UsersService {
   }
 
   async create(data: { email: string; password: string }) {
-    const user = await this.prisma.user.create({ data });
+    const user = await this.prisma.user.create({
+      data: { ...data, email: `${data.email} - ${new Date()}` },
+    });
+
+    this.userPublisher.emitCreateUser(user);
 
     return user;
   }
