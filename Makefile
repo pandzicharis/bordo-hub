@@ -15,7 +15,7 @@ CACHE_ROOT = docker compose -f infra/cache/docker-compose.yml
 EVENTS_ROOT = docker compose -f infra/events/docker-compose.yml
 
 # Migration URL
-GO_MIGRATE_DB_URL = postgresql://$(SHARED_DB_USER):$(SHARED_DB_PASSWORD)@postgres:$(SHARED_DB_PORT)/$(SHARED_DB_NAME)?sslmode=disable
+GO_MIGRATE_DB_URL = postgresql://$(SHARED_DB_USER):$(SHARED_DB_PASSWORD)@host.docker.internal:$(SHARED_DB_PORT)/$(SHARED_DB_NAME)?sslmode=disable
 
 # ========== INFRA ==========
 infra-init:
@@ -53,6 +53,8 @@ infra-init:
 	$(PYTHON_ROOT) up -d --build
 	$(DOTNET_ROOT) up -d --build
 
+	@echo "🗄️  Running migrations..."
+	@$(MAKE) migrate-up
 
 infra-down:
 	@echo "🛑 Removing API Gateway..."
@@ -88,9 +90,16 @@ migrate-create:
 	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate create -ext sql -dir /app/migrations -seq $(name)
 
 migrate-up:
+	@echo "🔼 Running Go migrations..."
 	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate \
 		-path=/app/migrations \
 		-database $(GO_MIGRATE_DB_URL) up
+
+	@echo "🟡 Running NestJS migrations..."
+	$(NEST_ROOT) run --rm nest sh -c "npm run migrate:dev"
+
+	@echo "🟣 Running Python Alembic migrations..."
+	$(PYTHON_ROOT) run --rm python sh -c "alembic upgrade head"
 
 # ========== LOGGER ==========
 logger-init:
