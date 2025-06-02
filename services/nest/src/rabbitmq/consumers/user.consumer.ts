@@ -14,7 +14,7 @@ export class UserConsumer implements OnModuleInit {
   }
 
   private async handleEvent(event: any) {
-    const data = event.data;
+    const data = JSON.parse(event.data);
 
     if (event.event === 'user.created') {
       console.log('USER.CREATED NEST', data);

@@ -20,3 +20,5 @@ obj
 services/python/__pycache__
 services/python/alembic/__pycache__
 services/python/models/__pycache__
+services/python/__pycache__/consumer.cpython-38.pyc
+services/python/services/__pycache__/user_service.cpython-38.pyc

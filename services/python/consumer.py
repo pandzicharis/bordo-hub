@@ -1,14 +1,28 @@
 import pika
 import json
+from db import get_db
+from services.user_service import UserService
 
 def handle_event(event):
     event_name = event['event']
-
     data_json_str = event['data']
     data = json.loads(data_json_str)
 
     if(event_name == 'user.created'):
-        print(f"[Python] 🎉 User created event received: {event_name}",data)
+        print(f"[Python] 🎉 User created event received: {event_name}", data)
+        # Create user in database
+        db = next(get_db())
+        user_service = UserService(db)
+        try:
+            user = user_service.create_user(
+                email=data.get('email'),
+                username=data.get('email'),
+            )
+            print(f"[Python] ✅ User created in database: {user.to_dict()}")
+        except Exception as e:
+            print(f"[Python] ❌ Failed to create user in database: {e}")
+        finally:
+            db.close()
 
 
 def start_event_listener():

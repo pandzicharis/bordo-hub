@@ -9,7 +9,7 @@ export class RedisService implements OnModuleInit {
   async onModuleInit() {
     this.client = new Redis({
       host: 'redis',
-      port: process.env.REDIS_PORT || 6379,
+      port: (process.env.REDIS_PORT || 6379) as number,
     });
 
     this.client.on('connect', () => {
