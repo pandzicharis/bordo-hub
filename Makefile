@@ -59,6 +59,9 @@ infra-init:
 	@echo "🗄️  Running kongo..."
 	@$(MAKE) kong-init
 
+	@echo "🗄️  Running logger..."
+	@$(MAKE) logger-init
+
 infra-down:
 	@echo "🛑 Removing API Gateway..."
 	$(DOCKER_COMPOSE_API_GATEWAY) down -v 
@@ -88,21 +91,43 @@ infra-down:
 kong-init:
 	./infra/api-gateway/init-kong.sh
 
-# ========== MIGRATIONS ==========
-migrate-create:
+# ========== SHARED DB MIGRATIONS ==========
+migrate-create_shared:
 	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate create -ext sql -dir /app/migrations -seq $(name)
 
-migrate-up:
+migrate-up_shared:
 	@echo "🔼 Running Go migrations..."
 	$(DOCKER_COMPOSE_DB) run --rm --no-deps migrate \
 		-path=/app/migrations \
 		-database $(GO_MIGRATE_DB_URL) up
 
-	@echo "🟡 Running NestJS migrations..."
+# ========== NEST DB MIGRATIONS ==========
+migrate-create_nest:
+	$(NEST_ROOT) run --rm nest sh -c "npm run migrate:create -- $(name)"
+
+migrate-up_nest:
+	@echo "🗄️  Running nest db migrations..."
 	$(NEST_ROOT) run --rm nest sh -c "npm run migrate:dev"
 
+# ========== PYTHON DB MIGRATIONS ==========
+migrate-create_python:
+	@echo "🔼 Creating Python Alembic migration..."
+	$(PYTHON_ROOT) run --rm python sh -c "alembic revision --autogenerate -m $(name)"
+
+migrate-up_python:
 	@echo "🟣 Running Python Alembic migrations..."
 	$(PYTHON_ROOT) run --rm python sh -c "alembic upgrade head"
+
+# ========== ALL DB's MIGRATIONS ==========
+migrate-up:
+	@echo "🗄️  Running shared db migrations..."
+	@$(MAKE) migrate-up_shared
+
+	@echo "🗄️  Running nest db migrations..."
+	@$(MAKE) migrate-up_nest
+
+	@echo "🗄️  Running python db migrations..."
+	@$(MAKE) migrate-up_python
 
 # ========== LOGGER ==========
 logger-init:
