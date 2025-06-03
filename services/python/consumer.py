@@ -2,6 +2,7 @@ import pika
 import json
 from db import get_db
 from services.user_service import UserService
+import os
 
 def handle_event(event):
     event_name = event['event']
@@ -26,8 +27,10 @@ def handle_event(event):
 
 
 def start_event_listener():
+    rabbitMqPort = os.environ.get("RABITMQ_PORT")
+
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host="rabbitmq",port=5672)  # Port se podrazumijeva 5672
+        pika.ConnectionParameters(host="rabbitmq",port=rabbitMqPort)  # Port se podrazumijeva 5672
     )
     channel = connection.channel()
 

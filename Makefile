@@ -56,6 +56,9 @@ infra-init:
 	@echo "🗄️  Running migrations..."
 	@$(MAKE) migrate-up
 
+	@echo "🗄️  Running kongo..."
+	@$(MAKE) kong-init
+
 infra-down:
 	@echo "🛑 Removing API Gateway..."
 	$(DOCKER_COMPOSE_API_GATEWAY) down -v 
