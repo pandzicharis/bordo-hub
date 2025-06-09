@@ -118,6 +118,15 @@ migrate-up_python:
 	@echo "🟣 Running Python Alembic migrations..."
 	$(PYTHON_ROOT) run --rm python sh -c "alembic upgrade head"
 
+# ========== DOTNET DB MIGRATIONS ==========
+migrate-create_dotnet:
+	@echo "🔼 Creating Dotnet migration..."
+	$(DOTNET_ROOT) run --rm dotnet dotnet ef migrations add $(name)
+
+migrate-up_dotnet:
+	@echo "🟣 Running Dotnet migrations..."
+	$(DOTNET_ROOT) run --rm dotnet dotnet ef database update
+
 # ========== ALL DB's MIGRATIONS ==========
 migrate-up:
 	@echo "🗄️  Running shared db migrations..."
@@ -128,6 +137,9 @@ migrate-up:
 
 	@echo "🗄️  Running python db migrations..."
 	@$(MAKE) migrate-up_python
+
+	@echo "🗄️  Running dotnet db migrations..."
+	@$(MAKE) migrate-up_dotnet
 
 # ========== LOGGER ==========
 logger-init:

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Helper;
 using dotnet.Services;
+using Microsoft.EntityFrameworkCore;
+using dotnet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +13,21 @@ LoggerConfigurationHelper.ConfigureLogging();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
+// Configure database
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Register RabbitMQ service
 builder.Services.AddSingleton<RabbitMQService>();
 
 var app = builder.Build();
+
+// Apply database migrations
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 RequestResponseLogger.ConfigureRequestLogging(app);
 
