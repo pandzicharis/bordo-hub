@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XX3cRgDfmi0=",
+  "dgSpecHash": "Jt10SgDtH4I=",
   "success": true,
   "projectFilePath": "/app/dotnet.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "/root/.nuget/packages/microsoft.extensions.logging.abstractions/7.0.0/microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
     "/root/.nuget/packages/microsoft.extensions.options/7.0.0/microsoft.extensions.options.7.0.0.nupkg.sha512",
     "/root/.nuget/packages/microsoft.extensions.primitives/7.0.0/microsoft.extensions.primitives.7.0.0.nupkg.sha512",
+    "/root/.nuget/packages/rabbitmq.client/6.8.1/rabbitmq.client.6.8.1.nupkg.sha512",
     "/root/.nuget/packages/serilog/2.12.0/serilog.2.12.0.nupkg.sha512",
     "/root/.nuget/packages/serilog.aspnetcore/7.0.0/serilog.aspnetcore.7.0.0.nupkg.sha512",
     "/root/.nuget/packages/serilog.extensions.hosting/7.0.0/serilog.extensions.hosting.7.0.0.nupkg.sha512",
@@ -24,8 +25,10 @@
     "/root/.nuget/packages/serilog.sinks.console/4.1.0/serilog.sinks.console.4.1.0.nupkg.sha512",
     "/root/.nuget/packages/serilog.sinks.debug/2.0.0/serilog.sinks.debug.2.0.0.nupkg.sha512",
     "/root/.nuget/packages/serilog.sinks.file/5.0.0/serilog.sinks.file.5.0.0.nupkg.sha512",
+    "/root/.nuget/packages/system.memory/4.5.5/system.memory.4.5.5.nupkg.sha512",
     "/root/.nuget/packages/system.text.encodings.web/7.0.0/system.text.encodings.web.7.0.0.nupkg.sha512",
-    "/root/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512"
+    "/root/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512",
+    "/root/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }

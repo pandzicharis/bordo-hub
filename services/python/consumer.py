@@ -36,9 +36,9 @@ def start_event_listener():
 
     channel.exchange_declare(exchange='exchange', exchange_type='fanout', durable=True)
 
-    channel.queue_declare(queue='fastapi.user.created', durable=True)
+    channel.queue_declare(queue='fastapi.users', durable=True)
 
-    channel.queue_bind(exchange='exchange', queue='fastapi.user.created')
+    channel.queue_bind(exchange='exchange', queue='fastapi.users')
 
     def callback(ch, method, properties, body):
         try:
@@ -50,7 +50,7 @@ def start_event_listener():
             ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
     channel.basic_consume(
-        queue='fastapi.user.created',
+        queue='fastapi.users',
         on_message_callback=callback,
         auto_ack=False
     )
