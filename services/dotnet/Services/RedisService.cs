@@ -8,7 +8,9 @@ public class RedisService
 
     public RedisService(IConfiguration configuration)
     {
-        var redisConnection ="redis:6379";
+        var host = "redis";
+        var port = Environment.GetEnvironmentVariable("REDIS_PORT") ?? "6379";
+        var redisConnection = $"{host}:{port}";
         _redis = ConnectionMultiplexer.Connect(redisConnection);
     }
 

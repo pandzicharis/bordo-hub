@@ -18,7 +18,16 @@ builder.Services.AddControllers();
 
 // Configure database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var host = "host.docker.internal";
+    var port = Environment.GetEnvironmentVariable("DOTNET_DB_PORT") ?? "5437";
+    var database = Environment.GetEnvironmentVariable("DOTNET_DB_NAME") ?? "dotnet_db";
+    var username = Environment.GetEnvironmentVariable("DOTNET_DB_USER") ?? "dotnet_user";
+    var password = Environment.GetEnvironmentVariable("DOTNET_DB_PASSWORD") ?? "dotnet_pass";
+
+    var connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password}";
+    options.UseNpgsql(connectionString);
+});
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<RabbitMQService>();

@@ -10,6 +10,8 @@ services:
       - ../../logs:/app/logs
     networks:
       - app-network
+    env_file:
+      - ../../.env
 
 networks:
   app-network:
