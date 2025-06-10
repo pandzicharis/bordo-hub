@@ -3,6 +3,8 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using dotnet.Data;
 
 namespace dotnet.Services;
 
@@ -11,11 +13,13 @@ public class RabbitMQService : IDisposable
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly ILogger<RabbitMQService> _logger;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly string _queueName = "dotnet.users";
 
-    public RabbitMQService(ILogger<RabbitMQService> logger)
+    public RabbitMQService(ILogger<RabbitMQService> logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
+        _serviceScopeFactory = serviceScopeFactory;
 
         var factory = new ConnectionFactory
         {
@@ -42,7 +46,7 @@ public class RabbitMQService : IDisposable
     {
         var consumer = new EventingBasicConsumer(_channel);
 
-        consumer.Received += (model, ea) =>
+        consumer.Received += async (model, ea) =>
         {
             try
             {
@@ -57,9 +61,23 @@ public class RabbitMQService : IDisposable
 
                     if (eventName == "user.created")
                     {
-                        _logger.LogInformation($"[.NET] 🎉 User created event received: {eventName}");
-                        // TODO: Add your user creation logic here
-                        _logger.LogInformation($"[.NET] ✅ Successfully processed user creation event");
+                        _logger.LogInformation($"[.NET] 🎉 User created event received: {eventName},{data}");
+
+                        using var scope = _serviceScopeFactory.CreateScope();
+                        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+                        // Parse the data string into a dictionary
+                        var userData = JsonSerializer.Deserialize<Dictionary<string, object>>(data);
+
+                        // Create a new user with data from the event
+                        var newUser = new User
+                        {
+                            Email = userData["email"].ToString(),
+                            UserName = userData["email"].ToString()
+                        };
+
+                        var createdUser = await userService.CreateUserAsync(newUser);
+                        _logger.LogInformation($"[.NET] ✅ Successfully created user with ID: {createdUser.Id}");
                     }
                 }
 

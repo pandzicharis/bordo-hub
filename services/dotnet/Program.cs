@@ -13,16 +13,17 @@ LoggerConfigurationHelper.ConfigureLogging();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
+builder.Services.AddControllers();
+
 // Configure database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register RabbitMQ service
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<RabbitMQService>();
 
 var app = builder.Build();
 
-// Apply database migrations
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -34,6 +35,8 @@ RequestResponseLogger.ConfigureRequestLogging(app);
 // Start RabbitMQ consumer
 var rabbitMQService = app.Services.GetRequiredService<RabbitMQService>();
 rabbitMQService.StartConsuming();
+
+app.MapControllers();
 
 app.MapGet("/hello", () =>
 {
