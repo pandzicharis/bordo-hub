@@ -58,11 +58,16 @@ namespace Helper
             return text;
         }
 
-        private static object TryParseJson(string input)
+        private static object TryParseJson(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return string.Empty;
+            }
+
             try
             {
-                return JsonSerializer.Deserialize<object>(input);
+                return JsonSerializer.Deserialize<object>(input) ?? string.Empty;
             }
             catch
             {

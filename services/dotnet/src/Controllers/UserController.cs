@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using dotnet.Data;
 using dotnet.Services;
+using dotnet.Models;
 
 namespace dotnet.Controllers
 {
@@ -17,11 +18,33 @@ namespace dotnet.Controllers
             _userService = userService;
         }
 
+        [HttpGet("me")]
+        public IActionResult GetCurrentUser()
+        {
+            var user = HttpContext.Items["User"] as AuthenticatedUser;
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(user);
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
+            var user = HttpContext.Items["User"] as AuthenticatedUser;
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+
             var users = await _userService.GetAllUsersAsync();
-            return Ok(users);
+
+            return Ok(new { users,user});
         }
 
         [HttpPost]

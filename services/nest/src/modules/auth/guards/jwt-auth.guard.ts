@@ -30,7 +30,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const redisActive = await this.redisService.get(`user:${userId}`);
 
     if (redisActive !== null) {
-      isActive = redisActive === 'true';
+      isActive = redisActive === true;
       console.log('Getting user active status from Redis:', userId, isActive);
     } else {
       const dbUser = await this.userService.findById(userId);

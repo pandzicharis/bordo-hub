@@ -54,12 +54,12 @@ public class RabbitMQService : IDisposable
                 var message = Encoding.UTF8.GetString(body);
                 var eventData = JsonSerializer.Deserialize<Dictionary<string, object>>(message);
 
-                if (eventData != null)
+                if (eventData != null && eventData.TryGetValue("event", out var eventObj) && eventData.TryGetValue("data", out var dataObj))
                 {
-                    var eventName = eventData["event"].ToString();
-                    var data = eventData["data"].ToString();
+                    var eventName = eventObj?.ToString();
+                    var data = dataObj?.ToString();
 
-                    if (eventName == "user.created")
+                    if (!string.IsNullOrEmpty(eventName) && !string.IsNullOrEmpty(data) && eventName == "user.created")
                     {
                         _logger.LogInformation($"[.NET] 🎉 User created event received: {eventName},{data}");
 
@@ -69,15 +69,30 @@ public class RabbitMQService : IDisposable
                         // Parse the data string into a dictionary
                         var userData = JsonSerializer.Deserialize<Dictionary<string, object>>(data);
 
-                        // Create a new user with data from the event
-                        var newUser = new User
+                        if (userData != null && userData.TryGetValue("email", out var emailObj))
                         {
-                            Email = userData["email"].ToString(),
-                            UserName = userData["email"].ToString()
-                        };
+                            var email = emailObj?.ToString();
+                            if (!string.IsNullOrEmpty(email))
+                            {
+                                // Create a new user with data from the event
+                                var newUser = new User
+                                {
+                                    Email = email,
+                                    UserName = email
+                                };
 
-                        var createdUser = await userService.CreateUserAsync(newUser);
-                        _logger.LogInformation($"[.NET] ✅ Successfully created user with ID: {createdUser.Id}");
+                                var createdUser = await userService.CreateUserAsync(newUser);
+                                _logger.LogInformation($"[.NET] ✅ Successfully created user with ID: {createdUser.Id}");
+                            }
+                            else
+                            {
+                                _logger.LogWarning("[.NET] ⚠️ Email is null or empty in the event data");
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogWarning("[.NET] ⚠️ Invalid user data format in the event");
+                        }
                     }
                 }
 

@@ -5,6 +5,7 @@ using Helper;
 using dotnet.Services;
 using Microsoft.EntityFrameworkCore;
 using dotnet.Data;
+using dotnet.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<RabbitMQService>();
+builder.Services.AddSingleton<RedisService>();
 
 var app = builder.Build();
 
@@ -31,6 +33,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 RequestResponseLogger.ConfigureRequestLogging(app);
+
+app.UseMiddleware<JwtMiddleware>();
 
 // Start RabbitMQ consumer
 var rabbitMQService = app.Services.GetRequiredService<RabbitMQService>();
