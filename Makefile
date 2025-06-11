@@ -13,6 +13,7 @@ DOTNET_ROOT = docker compose -f services/dotnet/docker-compose.yml
 LOGGER_LGP = docker compose -f infra/logging/docker-compose.yml
 CACHE_ROOT = docker compose -f infra/cache/docker-compose.yml
 EVENTS_ROOT = docker compose -f infra/events/docker-compose.yml
+FRONTEND_ROOT = docker compose -f frontend/docker-compose.yml
 
 # Migration URL
 GO_MIGRATE_DB_URL = postgresql://$(SHARED_DB_USER):$(SHARED_DB_PASSWORD)@host.docker.internal:$(SHARED_DB_PORT)/$(SHARED_DB_NAME)?sslmode=disable
@@ -62,6 +63,9 @@ infra-init:
 	@echo "🗄️  Running logger..."
 	@$(MAKE) logger-init
 
+	@echo "🗄️  Running frontend..."
+	@$(MAKE) run-frontend
+
 infra-down:
 	@echo "🛑 Removing API Gateway..."
 	$(DOCKER_COMPOSE_API_GATEWAY) down -v 
@@ -86,6 +90,9 @@ infra-down:
 
 	@echo "🛑 Removing events..."
 	$(EVENTS_ROOT) down -v
+
+	@echo "🛑 Removing frontend..."
+	@$(MAKE) down-frontend
 
 # ========== KONG ==========
 kong-init:
@@ -145,3 +152,12 @@ migrate-up:
 logger-init:
 	$(LOGGER_LGP) up --build -d
 	cd infra/logging && ./init.sh
+
+# ========== FRONTEND ==========
+run-frontend:
+	@echo "🗄️  Running frontend..."
+	$(FRONTEND_ROOT) up -d --build
+
+down-frontend:
+	@echo "🗄️  Removing frontend..."
+	$(FRONTEND_ROOT) down -v
