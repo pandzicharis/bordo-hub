@@ -1,0 +1,109 @@
+.login-page-split {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.login-page-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: #F5F6F8;
+  padding-top: 64px;
+  padding-bottom: 56px;
+}
+
+.login-page-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.login-side-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 85% center;
+  box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
+  display: block;
+  border-radius: 0;
+}
+
+.login-logo {
+  display: block;
+  margin: 0 auto 12px auto;
+  max-width: 70px;
+}
+
+.login-image {
+  display: block;
+  margin: 0 auto 16px auto;
+  max-width: 180px;
+}
+
+.login-title {
+  color: #000;
+  font-size: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.login-subtitle {
+  text-align: center;
+  margin-bottom: 1rem;
+  margin-top: 0;
+  color: #444;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-btn-large {
+  width: 100%;
+  max-width: 320px;
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 0;
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-sponsors {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.2rem;
+  margin-top: 1.5rem;
+}
+
+.sponsor-logo {
+  height: 32px;
+  width: auto;
+}
+
+

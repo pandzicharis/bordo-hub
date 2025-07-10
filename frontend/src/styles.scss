@@ -1,1 +1,62 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'Barlow', Roboto, "Helvetica Neue", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+$maroon-palette: (
+  50: #f3e6e6,
+  100: #e0b3b3,
+  200: #cc8080,
+  300: #b84d4d,
+  400: #a62626,
+  500: #510520,
+  600: #4d0000,
+  700: #440000,
+  800: #3a0000,
+  900: #330000,
+  A100: #ffb3b3,
+  A200: #ff8080,
+  A400: #ff4d4d,
+  A700: #ff3333,
+  contrast: (
+    50: #000,
+    100: #000,
+    200: #000,
+    300: #fff,
+    400: #fff,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+    A100: #000,
+    A200: #fff,
+    A400: #fff,
+    A700: #fff,
+  )
+);
+
+$primary: mat.m2-define-palette($maroon-palette, 500);
+$accent: mat.m2-define-palette($maroon-palette, 500);
+
+$custom-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+  )
+));
+
+@include mat.all-component-themes($custom-theme);
