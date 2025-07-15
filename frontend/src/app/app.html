@@ -1,1 +1,6 @@
-<router-outlet />
+<ng-container *ngIf="!loading(); else loadingTpl">
+  <router-outlet />
+</ng-container>
+<ng-template #loadingTpl>
+  <fks-loader />
+</ng-template>
