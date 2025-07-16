@@ -111,4 +111,12 @@ curl -s -o /dev/null -w "%{http_code}" -X POST "${KONG_ADMIN_API_URL}/routes/${P
   --data "config.claims_to_verify=exp"
 echo " ✅ Python JWT added."
 
+# Adding CORS plugin to nest-service
+curl -s -o /dev/null -w "%{http_code}" -X POST "${KONG_ADMIN_API_URL}/services/${NEST_SERVICE}/plugins" \
+  --data "name=cors" \
+  --data "config.origins=*" \
+  --data "config.headers=Accept,Authorization,Content-Type,Origin" \
+  --data "config.credentials=true"
+echo " ✅ CORS plugin added to nest-service."
+
 echo "🎉 Kong config DONE!"

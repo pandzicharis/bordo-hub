@@ -27,7 +27,7 @@ export class UsersService {
 
   async create(data: { email: string; password: string }) {
     const user = await this.prisma.user.create({
-      data: { ...data, email: `${data.email} - ${new Date()}` },
+      data: { ...data, email: `${data.email}` },
     });
 
     this.userPublisher.emitCreateUser(user);
