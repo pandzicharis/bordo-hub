@@ -63,9 +63,6 @@ infra-init:
 	@echo "🗄️  Running logger..."
 	@$(MAKE) logger-init
 
-	@echo "🗄️  Running frontend..."
-	@$(MAKE) run-frontend
-
 infra-down:
 	@echo "🛑 Removing API Gateway..."
 	$(DOCKER_COMPOSE_API_GATEWAY) down -v 
