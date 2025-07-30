@@ -20,6 +20,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .title-wrapper {
@@ -30,26 +31,29 @@
   margin-bottom: 20px;
 }
 
-.login-side-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 85% center;
-  box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
-  display: block;
-  border-radius: 0;
+.login-side-content {
+  text-align: center;
+  color: white;
+  padding: 2rem;
 }
 
-.login-logo {
-  display: block;
-  margin: 0 auto 12px auto;
-  max-width: 70px;
+.login-side-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
 }
 
-.login-image {
-  display: block;
-  margin: 0 auto 16px auto;
-  max-width: 180px;
+.login-side-content p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.app-title {
+  color: #3f51b5;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .login-title {
@@ -91,19 +95,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.login-sponsors {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2.2rem;
-  margin-top: 1.5rem;
-}
-
-.sponsor-logo {
-  height: 32px;
-  width: auto;
 }
 
 

@@ -42,7 +42,7 @@ export class LoginComponent {
 
   submit() {
     if (this.form.invalid) return;
-    this.loading = true;
+   
     this.error = null;
     this.authService.login(this.form.value).subscribe({
       next: () => {

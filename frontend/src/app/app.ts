@@ -3,11 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { AuthService } from './features/auth/services/auth.service';
 import {  signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FksLoaderComponent } from './shared/fks-loader.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, FksLoaderComponent],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
