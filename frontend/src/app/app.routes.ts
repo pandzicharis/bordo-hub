@@ -1,7 +1,21 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/pages/login/login.component';
 import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
-import { AuthGuard } from './features/auth/guards/auth.guard';
+import { inject } from '@angular/core';
+import { AuthService } from './features/auth/services/auth.service';
+import { Router } from '@angular/router';
+
+const authGuard = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  
+  if (authService.isAuthenticated()) {
+    return true;
+  }
+  
+  router.navigate(['/login']);
+  return false;
+};
 
 export const routes: Routes = [
   {
@@ -11,15 +25,15 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuard]
+    canActivate: [authGuard]
   },
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'login'
   }
 ];

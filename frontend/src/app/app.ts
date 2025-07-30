@@ -17,14 +17,51 @@ export class App implements OnInit {
   protected title = 'app';
 
   ngOnInit() {
-    this.authService.getCurrentUser().subscribe(() => {
-      this.loading.set(false);
-      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-        const preloader = document.getElementById('global-preloader');
-        if (preloader) {
-          preloader.remove();
-        }
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      const preloader = document.getElementById('global-preloader');
+      if (preloader) {
+        preloader.remove();
       }
-    });
+    }
+
+    if (this.authService.isAuthenticated()) {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser) {
+        setTimeout(() => {
+          this.fadeOutLoader();
+        }, 300);
+      } else {
+        this.authService.validate().subscribe({
+          next: (user) => {
+            this.authService.setUserData(localStorage.getItem('access_token') || '', user);
+            setTimeout(() => {
+              this.fadeOutLoader();
+            }, 300);
+          },
+          error: () => {
+            this.authService.logout();
+            setTimeout(() => {
+              this.fadeOutLoader();
+            }, 300);
+          }
+        });
+      }
+    } else {
+      setTimeout(() => {
+        this.fadeOutLoader();
+      }, 800);
+    }
+  }
+
+  private fadeOutLoader() {
+    const loadingContainer = document.querySelector('.loading-container');
+    if (loadingContainer) {
+      loadingContainer.classList.add('fade-out');
+      setTimeout(() => {
+        this.loading.set(false);
+      }, 300);
+    } else {
+      this.loading.set(false);
+    }
   }
 }

@@ -1,58 +1,94 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService, LoginRequest, User } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  form: FormGroup;
-  loading = false;
-  error: string | null = null;
+  loginForm: FormGroup;
+  isLoading = false;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {
-    this.form = this.fb.group({
+    this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  submit() {
-    if (this.form.invalid) return;
-   
-    this.error = null;
-    this.authService.login(this.form.value).subscribe({
-      next: () => {
-        this.loading = false;
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = err?.error?.message || 'Login failed. Please try again.';
-      }
-    });
+  onSubmit(): void {
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      const loginRequest: LoginRequest = this.loginForm.value;
+
+      this.authService.login(loginRequest).subscribe({
+        next: (response) => {
+       
+          if (response && response.access_token) {
+            const token = response.access_token;
+            
+            if (typeof localStorage !== 'undefined') {
+              try {
+                localStorage.setItem('access_token', token);
+              } catch (error) {
+                console.error('Error saving to localStorage:', error);
+              }
+            } else {
+              console.error('localStorage is not available');
+            }
+            
+            this.authService.validate().subscribe({
+              next: (user: User) => {
+                console.log('User data:', user);
+                this.authService.setUserData(response.access_token, user);
+                this.router.navigate(['/dashboard']);
+              },
+              error: (error) => {
+                console.error('Error fetching user data:', error);
+                this.errorMessage = 'Error fetching user data';
+                this.isLoading = false;
+                localStorage.removeItem('access_token');
+              }
+            });
+          } else {
+            console.error('No access_token in response:', response);
+            this.errorMessage = 'Invalid response from server';
+            this.isLoading = false;
+          }
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+          this.errorMessage = error.error?.message || 'Login failed';
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.loginForm.get(fieldName);
+    if (field?.hasError('required')) {
+      return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+    }
+    if (field?.hasError('email')) {
+      return 'Please enter a valid email address';
+    }
+    if (field?.hasError('minlength')) {
+      return 'Password must be at least 6 characters long';
+    }
+    return '';
   }
 }

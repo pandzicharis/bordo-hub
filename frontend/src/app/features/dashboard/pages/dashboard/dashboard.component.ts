@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService, User } from '../../../auth/services/auth.service';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../auth/services/auth.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,9 +10,36 @@ import { Observable } from 'rxjs';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent {
-  user$: Observable<any>;
-  constructor(public authService: AuthService) {
-    this.user$ = this.authService.user$;
+export class DashboardComponent implements OnInit {
+  currentUser: User | null = null;
+  isLoading = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.currentUser = this.authService.getCurrentUser();
+    
+    if (!this.currentUser) {
+      this.isLoading = true;
+      this.authService.validate().subscribe({
+        next: (user: User) => {
+          this.currentUser = user;
+          this.authService.setUserData(localStorage.getItem('access_token') || '', user);
+          this.isLoading = false;
+        },
+        error: () => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }
+      });
+    }
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 } 

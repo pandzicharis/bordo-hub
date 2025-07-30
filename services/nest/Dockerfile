@@ -8,7 +8,8 @@ RUN npm install
 
 COPY . .
 
-RUN npm install -g nodemon
+RUN npm install -g nodemon ts-node
+
 CMD ["npm", "run", "start:dev"]
 
 EXPOSE 3000

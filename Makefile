@@ -60,6 +60,9 @@ infra-init:
 	@echo "🗄️  Running kongo..."
 	@$(MAKE) kong-init
 
+	@echo "🗄️  Creating default user..."
+	@$(MAKE) create-default-user
+
 	@echo "🗄️  Running logger..."
 	@$(MAKE) logger-init
 
@@ -144,6 +147,11 @@ migrate-up:
 
 	@echo "🗄️  Running dotnet db migrations..."
 	@$(MAKE) migrate-up_dotnet
+
+# ========== DEFAULT USER ==========
+create-default-user:
+	@chmod +x services/nest/scripts/create-default-user.sh
+	@./services/nest/scripts/create-default-user.sh
 
 # ========== LOGGER ==========
 logger-init:

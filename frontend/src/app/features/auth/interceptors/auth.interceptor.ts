@@ -1,20 +1,34 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private authService = inject(AuthService);
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
-    if (token) {
-      const cloned = req.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
-      });
-      return next.handle(cloned);
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    let token = null;
+    
+    if (typeof localStorage !== 'undefined') {
+      try {
+        token = localStorage.getItem('access_token');
+      } catch (error) {
+        console.error('Interceptor - Error reading localStorage:', error);
+      }
+    } else {
+      console.log('Interceptor - localStorage not available');
     }
-    return next.handle(req);
+    
+    if (token && token.length > 0) {
+      const authHeader = `Bearer ${token}`;
+      
+      request = request.clone({
+        setHeaders: {
+          Authorization: authHeader
+        }
+      });
+    } else {
+      console.log('Interceptor - No token found or token is empty');
+    }
+    
+    return next.handle(request);
   }
 } 
