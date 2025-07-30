@@ -40,15 +40,8 @@ export class LoginComponent {
           if (response && response.access_token) {
             const token = response.access_token;
             
-            if (typeof localStorage !== 'undefined') {
-              try {
-                localStorage.setItem('access_token', token);
-              } catch (error) {
-                console.error('Error saving to localStorage:', error);
-              }
-            } else {
-              console.error('localStorage is not available');
-            }
+            // Use AuthService to handle localStorage safely
+            this.authService.setUserData(token, {} as User); // Temporary user object
             
             this.authService.validate().subscribe({
               next: (user: User) => {
@@ -60,7 +53,7 @@ export class LoginComponent {
                 console.error('Error fetching user data:', error);
                 this.errorMessage = 'Error fetching user data';
                 this.isLoading = false;
-                localStorage.removeItem('access_token');
+                this.authService.logout();
               }
             });
           } else {

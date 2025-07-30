@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface ApiRequestOptions {
   headers?: HttpHeaders;
@@ -21,6 +22,7 @@ export interface ApiResponse<T = any> {
 })
 export class ApiService {
   private baseUrl = environment.apiUrl || 'http://localhost:8000';
+  private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}
 
@@ -54,7 +56,16 @@ export class ApiService {
   }
 
   createAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('access_token');
+    let token = null;
+    
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        token = localStorage.getItem('access_token');
+      } catch (error) {
+        console.error('API Service - Error reading localStorage:', error);
+      }
+    }
+    
     return new HttpHeaders({
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` })

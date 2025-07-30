@@ -27,7 +27,9 @@ export class DashboardComponent implements OnInit {
       this.authService.validate().subscribe({
         next: (user: User) => {
           this.currentUser = user;
-          this.authService.setUserData(localStorage.getItem('access_token') || '', user);
+          // Get token from AuthService instead of directly accessing localStorage
+          const token = this.authService.getToken();
+          this.authService.setUserData(token || '', user);
           this.isLoading = false;
         },
         error: () => {

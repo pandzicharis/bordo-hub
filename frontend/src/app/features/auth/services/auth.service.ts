@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../shared/services/api.service';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface LoginRequest {
   email: string;
@@ -28,6 +29,8 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
+  private platformId = inject(PLATFORM_ID);
+
   constructor(private apiService: ApiService) {}
 
   register(request: RegisterRequest): Observable<User> {
@@ -39,60 +42,67 @@ export class AuthService {
   }
 
   validate(): Observable<User> {
-    const token = localStorage.getItem('access_token');
+    const token = this.getToken();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     
     return this.apiService.get<User>('auth/validate', { headers });
   }
 
   logout(): void {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       try {
         localStorage.removeItem('access_token');
         localStorage.removeItem('user');
-        console.log('Logout - localStorage cleared');
       } catch (error) {
         console.error('Logout - Error clearing localStorage:', error);
       }
-    } else {
-      console.log('Logout - localStorage not available');
     }
   }
 
   isAuthenticated(): boolean {
-    let token = null;
-    
-    if (typeof localStorage !== 'undefined') {
-      try {
-        token = localStorage.getItem('access_token');
-        console.log('isAuthenticated - localStorage available');
-      } catch (error) {
-        console.error('isAuthenticated - Error reading localStorage:', error);
-      }
-    } else {
-      console.log('isAuthenticated - localStorage not available');
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
     }
     
-    console.log('isAuthenticated - Token:', token);
-    console.log('isAuthenticated - Token exists:', !!token);
+    const token = this.getToken();
     return !!token;
   }
 
   getCurrentUser(): User | null {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+    
+    try {
+      const userStr = localStorage.getItem('user');
+      return userStr ? JSON.parse(userStr) : null;
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
   }
 
   setUserData(token: string, user: User): void {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       try {
         localStorage.setItem('access_token', token);
         localStorage.setItem('user', JSON.stringify(user));
       } catch (error) {
         console.error('setUserData - Error saving to localStorage:', error);
       }
-    } else {
-      console.log('setUserData - localStorage not available');
+    }
+  }
+
+  getToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+    
+    try {
+      return localStorage.getItem('access_token');
+    } catch (error) {
+      console.error('Error getting token:', error);
+      return null;
     }
   }
 } 
