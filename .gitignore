@@ -17,10 +17,14 @@ services/nest/src/generated/prisma
 /node_modules
 /services/dotnet/obj
 obj
-services/python/__pycache__
-services/python/alembic/__pycache__
-services/python/models/__pycache__
-services/python/__pycache__/consumer.cpython-38.pyc
-services/python/services/__pycache__/user_service.cpython-38.pyc
-services/python/alembic/versions/__pycache__/958d6c2d9046_create_users_table.cpython-38.pyc
+# Python cache files
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
 frontend/node_modules
+services/python/examples
+/examples
+/.env
