@@ -38,10 +38,13 @@ class AuthService:
             # Check if user is active in Redis
             redis_active = self.redis_service.get(f"user:{user_id}")
 
+            # Default to True if no Redis data found
+            is_active = True
+            
             if redis_active is not None:
                 print("User active status in Redis", redis_active)
                 is_active = redis_active
-            
+                                            
                 print(f'User active status: {is_active}')
 
             if not is_active:

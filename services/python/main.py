@@ -6,6 +6,7 @@ from consumer import start_event_listener
 from services.redis_service import RedisService
 from services.auth_dependency import get_current_user
 from typing import Dict, Any
+from controllers.ai_controller import router as ai_router
 
 app = FastAPI()
 
@@ -14,6 +15,8 @@ logger_middleware(app)
 
 # Initialize Redis service
 redis_service = RedisService(host='redis', port=6379, db=0)
+
+app.include_router(ai_router)
 
 Thread(target=start_event_listener, daemon=True).start()
 
