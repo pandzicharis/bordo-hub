@@ -29,4 +29,4 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Downgrade schema: drop feature_configs table."""
-    op.drop_table('users')
+    op.drop_table('feature_configs')
