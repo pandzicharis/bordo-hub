@@ -71,6 +71,34 @@ export class LoginComponent {
     }
   }
 
+  loginWithGoogle(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const apiGatewayUrl = 'http://localhost:8000';
+    
+    fetch(`${apiGatewayUrl}/auth/google`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          this.errorMessage = 'Failed to get Google OAuth URL';
+          this.isLoading = false;
+        }
+      })
+      .catch(error => {
+        console.error('Google OAuth error:', error);
+        this.errorMessage = 'Failed to initiate Google OAuth';
+        this.isLoading = false;
+      });
+  }
+
   getErrorMessage(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
     if (field?.hasError('required')) {

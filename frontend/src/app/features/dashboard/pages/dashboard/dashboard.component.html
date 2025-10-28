@@ -6,7 +6,29 @@
 
   <div class="dashboard-content" *ngIf="currentUser && !isLoading">
     <div class="user-card">
-      <h2>Welcome, {{ currentUser.email }}!</h2>
+      <div class="user-header">
+        <div class="user-avatar">
+          <img 
+            *ngIf="hasAvatar()" 
+            [src]="currentUser.avatar" 
+            [alt]="currentUser.email"
+            class="avatar-image"
+          />
+          <div 
+            *ngIf="!hasAvatar()" 
+            class="avatar-initials"
+          >
+            {{ getInitials(currentUser.email) }}
+          </div>
+        </div>
+        <div class="user-welcome">
+          <h2>Welcome, {{ currentUser.email }}!</h2>
+          <p class="user-provider" *ngIf="currentUser.provider">
+            Signed in via {{ currentUser.provider | titlecase }}
+          </p>
+        </div>
+      </div>
+      
       <div class="user-info">
         <p><strong>User ID:</strong> {{ currentUser.id }}</p>
         <p><strong>Email:</strong> {{ currentUser.email }}</p>

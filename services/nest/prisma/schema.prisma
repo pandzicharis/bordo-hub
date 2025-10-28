@@ -22,7 +22,10 @@ model FeatureConfig {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String
+  password  String?
+  googleId  String?  @unique
+  avatar    String?
+  provider  String   @default("local") // local, google
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

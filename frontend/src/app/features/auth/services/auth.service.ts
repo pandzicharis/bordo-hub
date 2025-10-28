@@ -21,6 +21,8 @@ export interface User {
   id: string;
   email: string;
   active: boolean;
+  avatar?: string;
+  provider?: string;
   createdAt: string;
   updatedAt: string;
 }

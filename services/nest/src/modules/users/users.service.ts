@@ -19,19 +19,32 @@ export class UsersService {
     });
   }
 
+  async findByGoogleId(googleId: string) {
+    return this.prisma.user.findUnique({
+      where: { googleId },
+    });
+  }
+
   async findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
     });
   }
 
-  async create(data: { email: string; password: string }) {
+  async create(data: any) {
     const user = await this.prisma.user.create({
-      data: { ...data, email: `${data.email}` },
+      data: { ...data },
     });
 
     this.userPublisher.emitCreateUser(user);
 
     return user;
+  }
+
+  async update(id: string, data: any) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
   }
 }

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../../auth/services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TitleCasePipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -43,5 +43,13 @@ export class DashboardComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  getInitials(email: string): string {
+    return email.charAt(0).toUpperCase();
+  }
+
+  hasAvatar(): boolean {
+    return !!(this.currentUser?.avatar && this.currentUser.avatar !== null && this.currentUser.avatar.trim() !== '');
   }
 } 
